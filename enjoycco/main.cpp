@@ -10,15 +10,14 @@ void func2()
 
 	cout << "func2 1" << endl;	
 
-	CoroutineContext::current_->yield();
-
+	CoroutineContext::this_coroutine_yield();
 	cout << "func2 2" << endl;
 }
 void func()
 {
 	cout << "func 1" << endl;	
-
-	CoroutineContext::current_->yield();
+	
+	CoroutineContext::this_coroutine_yield();
 	
 	Coroutine s(func2);
 
