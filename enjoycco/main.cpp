@@ -19,13 +19,7 @@ void func()
 	
 	CoroutineContext::this_coroutine_yield();
 	
-	Coroutine s(func2);
-
-	s.start();
-
 	cout << "func 2" << endl;
-
-	s.resume();
 
 }
 
@@ -36,8 +30,12 @@ void test1()
 	
 	cout << "main done 1" << endl;
 	s.resume();
-
+	
 	cout << "main done 2" << endl;
+	
+	s.resume();
+
+	cout << "main done 3" << endl;
 }
 
 void test2()

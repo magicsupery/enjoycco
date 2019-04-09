@@ -1,35 +1,15 @@
 #pragma once
 #include <boost/context/all.hpp>
 #include <iostream>
+
+
 #include "../fcontext/stack_allocator.h"
-#include "../utils/noncopyable.h"
+#include "coroutine_context.h"
+
 namespace enjoyc
 {
 	namespace co
 	{
-		
-		class Coroutine;
-		class CoroutineContext: public NonCopyable
-		{
-			private:
-				static Coroutine* current_;
-			public:
-				static void this_coroutine_yield();
-
-				static void set_current_coroutine(Coroutine* current);
-
-				static Coroutine* this_coroutine();
-		};
-
-		enum class Coroutine_S
-		{
-			INVALID = 0,
-			RUNNING,
-			YIELD,
-			FINISHED,
-			CLOSED,
-		};
-
 		using fcontext_t = boost::context::detail::fcontext_t;
 		using transfer_t = boost::context::detail::transfer_t;
 		typedef void (*Function)(void);
@@ -54,27 +34,52 @@ namespace enjoyc
 				to_t_ = boost::context::detail::make_fcontext(sp_, 
 						stack_allocator_.default_stacksize(), 
 						&Coroutine::wrapper_function);
+				state_ = Coroutine_S::READY;
 			}
 
-			public:
-				void start()
+				~Coroutine()
 				{
-					state_ = Coroutine_S::RUNNING;
-					int a = 0;
-					JumpData jump_data{CoroutineContext::this_coroutine(), this, &a};
-					jump_to(to_t_, jump_data);
+					stack_allocator_.deallocate(sp_, stack_allocator_.default_stacksize());
 				}
 
-				void resume()
+			public:
+				RetCode start()
 				{
-					start();
+					if(state_ == Coroutine_S::RUNNING)
+					{
+						return RetCode::ret_already_running;
+					}
+					else if(state_ == Coroutine_S::FINISHED)
+					{
+						return RetCode::ret_already_finished;
+					}
+
+					state_ = Coroutine_S::RUNNING;
+					JumpData jump_data{CoroutineContext::this_coroutine(), this, nullptr};
+					jump_to(to_t_, jump_data);
+
+					return RetCode::ret_success;
+				}
+
+				RetCode resume()
+				{
+					return start();
 				}
 
 				void yield()
 				{
 					std::cout << __FUNCTION__ << " to context is " << from_t_ << std::endl;
+					state_ = Coroutine_S::READY;
 					auto back_transfer_t = boost::context::detail::jump_fcontext(from_t_, nullptr);
 					set_from_context(back_transfer_t.fctx);
+				}
+
+				void finish()
+				{
+
+					std::cout << __FUNCTION__ << " to context is " << from_t_ << std::endl;
+					state_ = Coroutine_S::FINISHED;
+					boost::context::detail::jump_fcontext(from_t_, nullptr);
 				}
 
 				void run()
@@ -97,14 +102,14 @@ namespace enjoyc
 			protected:
 				static void wrapper_function(transfer_t t)
 				{
-
 					JumpData* jump_data = reinterpret_cast<JumpData*>(t.data);
 					auto co_to = jump_data->to_co;
 					co_to->set_from_context(t.fctx);
 
 					co_to->run();
+
 					co_to->set_state(Coroutine_S::FINISHED);
-					co_to->yield();
+					co_to->finish();
 				}
 
 				void jump_to(fcontext_t& to, JumpData& jump_data)
@@ -124,31 +129,12 @@ namespace enjoyc
 
 				fcontext_t from_t_;
 				fcontext_t to_t_;
-				void* data_;
 
 				DefaultAllocator stack_allocator_;
 				void* sp_;
 		};
 
 
-		inline void CoroutineContext::this_coroutine_yield()
-		{
-			if(current_)
-				current_->yield();
-			else
-			{
-			}
-		}
-
-		inline void CoroutineContext::set_current_coroutine(Coroutine* current)
-		{
-			current_ = current;
-		}
-
-		inline Coroutine* CoroutineContext::this_coroutine()
-		{
-			return	current_;
-		}
 	}
 }
 
