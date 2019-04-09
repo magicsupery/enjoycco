@@ -1,4 +1,4 @@
-#include "coroutine/coroutinue.h"
+#include "coroutine/coroutine.h"
 
 #include <iostream>
 
@@ -10,7 +10,7 @@ void func2()
 
 	cout << "func2 1" << endl;	
 
-	CoroutinueContext::current_->yield();
+	CoroutineContext::current_->yield();
 
 	cout << "func2 2" << endl;
 }
@@ -18,9 +18,9 @@ void func()
 {
 	cout << "func 1" << endl;	
 
-	CoroutinueContext::current_->yield();
+	CoroutineContext::current_->yield();
 	
-	Coroutinue s(func2);
+	Coroutine s(func2);
 
 	s.start();
 
@@ -32,7 +32,7 @@ void func()
 
 void test1()
 {
-	Coroutinue s(func);
+	Coroutine s(func);
 	s.start();
 	
 	cout << "main done 1" << endl;
