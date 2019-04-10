@@ -1,6 +1,5 @@
 #pragma once
 #include <boost/context/all.hpp>
-#include <iostream>
 
 
 #include "../fcontext/stack_allocator.h"
@@ -68,7 +67,6 @@ namespace enjoyc
 
 				void yield()
 				{
-					std::cout << __FUNCTION__ << " to context is " << from_t_ << std::endl;
 					state_ = Coroutine_S::READY;
 					auto back_transfer_t = boost::context::detail::jump_fcontext(from_t_, nullptr);
 					set_from_context(back_transfer_t.fctx);
@@ -77,7 +75,6 @@ namespace enjoyc
 				void finish()
 				{
 
-					std::cout << __FUNCTION__ << " to context is " << from_t_ << std::endl;
 					state_ = Coroutine_S::FINISHED;
 					boost::context::detail::jump_fcontext(from_t_, nullptr);
 				}
@@ -114,8 +111,6 @@ namespace enjoyc
 
 				void jump_to(fcontext_t& to, JumpData& jump_data)
 				{
-					std::cout << __FUNCTION__ << " from_co is " << jump_data.from_co << " to_co is " << jump_data.to_co <<
-						" to context is " << to_t_ << std::endl;
 					CoroutineContext::set_current_coroutine(jump_data.to_co);
 					auto back_transfer_t = boost::context::detail::jump_fcontext(to, &jump_data);
 					to_t_ = back_transfer_t.fctx;
