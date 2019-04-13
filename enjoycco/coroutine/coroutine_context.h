@@ -11,8 +11,6 @@ namespace enjoyc
 			private:
 				static Coroutine* current_;
 			public:
-				static void this_coroutine_yield();
-
 				inline static void set_current_coroutine(Coroutine* current)
 				{
 					current_ = current;
@@ -21,6 +19,11 @@ namespace enjoyc
 				inline static Coroutine* this_coroutine()
 				{
 					return current_;
+				}
+
+				inline static bool in_coroutine_context()
+				{
+					return current_ != nullptr;
 				}
 		};
 

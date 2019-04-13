@@ -7,13 +7,5 @@ namespace enjoyc
 	{
 		Coroutine* CoroutineContext::current_ = nullptr;
 
-		void CoroutineContext::this_coroutine_yield()
-		{
-			if(current_)
-				current_->yield();
-			else
-			{
-			}
-		}
 	}
 }

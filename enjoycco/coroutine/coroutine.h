@@ -13,6 +13,8 @@ namespace enjoyc
 		using transfer_t = boost::context::detail::transfer_t;
 		typedef void (*Function)(void);
 		using DefaultAllocator = StackAllocator<8 * 1024 * 1024, 4 * 1024 * 1024, 1 * 1024 * 1024>;
+
+
 		class Coroutine: public NonCopyable
 		{
 			private:
@@ -30,8 +32,8 @@ namespace enjoyc
 					to_t_(nullptr)
 			{
 				sp_ = stack_allocator_.allocate(stack_allocator_.default_stacksize());
-				to_t_ = boost::context::detail::make_fcontext(sp_, 
-						stack_allocator_.default_stacksize(), 
+				to_t_ = boost::context::detail::make_fcontext(sp_,
+						stack_allocator_.default_stacksize(),
 						&Coroutine::wrapper_function);
 				state_ = Coroutine_S::READY;
 			}
@@ -60,11 +62,6 @@ namespace enjoyc
 					return RetCode::ret_success;
 				}
 
-				RetCode resume()
-				{
-					return start();
-				}
-
 				void yield()
 				{
 					state_ = Coroutine_S::READY;
@@ -74,7 +71,6 @@ namespace enjoyc
 
 				void finish()
 				{
-
 					state_ = Coroutine_S::FINISHED;
 					boost::context::detail::jump_fcontext(from_t_, nullptr);
 				}
@@ -82,7 +78,7 @@ namespace enjoyc
 				void run()
 				{
 					fn_();
-				}	
+				}
 
 				void set_state(Coroutine_S s)
 				{

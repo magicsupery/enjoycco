@@ -8,7 +8,7 @@ endif()
 
 
 if (UNIX)
-    set(CMAKE_CXX_FLAGS "-std=c++17 -fPIC -Wall -m64 ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++14 -fPIC -Wall -m64 ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS_DEBUG "-g ${CMAKE_CXX_FLAGS}")
     set(CMAKE_CXX_FLAGS_RELEASE "-g -O3 ${CMAKE_CXX_FLAGS}")
 elseif (WIN32)
@@ -39,8 +39,8 @@ else()
 	EXIT()	
 endif()
 # add include and lib other project
-include_directories(${PROJECT_SOURCE_DIR}/../include)
-link_directories(${PROJECT_SOURCE_DIR}/../lib)
+#include_directories(${PROJECT_SOURCE_DIR}/../include)
+#link_directories(${PROJECT_SOURCE_DIR}/../lib)
 
 aux_source_directory(${PROJECT_SOURCE_DIR} SRC_LIST)
 
@@ -52,5 +52,5 @@ foreach(var ${SRC_LIST})
 
 	set(target ${tgt}.t)
 	add_executable(${target} ${var})
-	target_link_libraries(${target} ${LINK_ARGS} rt)
+	target_link_libraries(${target} ${LINK_ARGS})
 endforeach(var)
