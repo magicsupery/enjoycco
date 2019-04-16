@@ -2,10 +2,6 @@
 #include <assert.h>
 #include "coroutine/coroutine.h"
 
-#define GO(FUNCTION)  do{\
-	::enjoyc::co::Coroutine(FUNCTION).start(); \
-}while(0)
-
 #define CO_YIELD do{\
 	::enjoyc::co::CoroutineContext::this_coroutine()->yield(); \
 }while(0)

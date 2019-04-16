@@ -11,7 +11,7 @@ namespace enjoyc
 	{
 		using fcontext_t = boost::context::detail::fcontext_t;
 		using transfer_t = boost::context::detail::transfer_t;
-		typedef void (*Function)(void);
+		using Function = std::function<void()>;
 		using DefaultAllocator = StackAllocator<8 * 1024 * 1024, 4 * 1024 * 1024, 1 * 1024 * 1024>;
 
 
