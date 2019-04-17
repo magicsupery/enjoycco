@@ -1,6 +1,6 @@
 #pragma once
 #include <boost/context/all.hpp>
-
+#include <iostream>
 
 #include "../fcontext/stack_allocator.h"
 #include "coroutine_context.h"
@@ -40,6 +40,10 @@ namespace enjoyc
 
 				~Coroutine()
 				{
+					if(state_ != Coroutine_S::FINISHED)
+					{
+						std::cout << "~Coroutine() " << this << " has not finished but dtor " << std::endl;
+					}
 					stack_allocator_.deallocate(sp_, stack_allocator_.default_stacksize());
 				}
 
@@ -58,6 +62,9 @@ namespace enjoyc
 					state_ = Coroutine_S::RUNNING;
 					JumpData jump_data{CoroutineContext::this_coroutine(), this, nullptr};
 					jump_to(to_t_, jump_data);
+					
+					if(state_ == Coroutine_S::FINISHED)
+						return RetCode::ret_already_finished;
 
 					return RetCode::ret_success;
 				}
