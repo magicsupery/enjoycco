@@ -5,7 +5,7 @@ namespace enjoyc
 {
 	namespace co
 	{
-		Coroutine* CoroutineContext::current_ = nullptr;
+		thread_local Coroutine* CoroutineContext::current_ = nullptr;
 
 	}
 }

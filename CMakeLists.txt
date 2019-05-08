@@ -45,6 +45,7 @@ message("----------------------------------")
 
 # add include and lib other project
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${Boost_INCLUDE_DIRS}) 
 
 #link_directories(${PROJECT_SOURCE_DIR}/lib)
 

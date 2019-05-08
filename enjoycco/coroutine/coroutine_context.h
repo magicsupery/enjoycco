@@ -9,7 +9,7 @@ namespace enjoyc
 		class CoroutineContext: public NonCopyable
 		{
 			private:
-				static Coroutine* current_;
+				thread_local static Coroutine* current_;
 			public:
 				inline static void set_current_coroutine(Coroutine* current)
 				{
