@@ -36,12 +36,12 @@ message("----------------------------------")
 
 # find boost
 #set(Boost_USE_STATIC_LIBS   ON)
-#find_package(Boost COMPONENTS context)
-#if(Boost_FOUND)
-#else()
-#	message("can not find boost, please install boost first")
-#	EXIT()	
-#endif()
+find_package(Boost COMPONENTS context)
+if(Boost_FOUND)
+else()
+	message("can not find boost, please install boost first")
+	EXIT()	
+endif()
 
 # add include and lib other project
 include_directories(${PROJECT_SOURCE_DIR}/include)
